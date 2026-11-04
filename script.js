@@ -45,17 +45,31 @@ class Point {
         } else throw new TypeError(`${other} must be a Point`);
     }
 
+    isHit(r=this.r) {
+        const x = this.x;
+        const y = this.y;
+        if (x >= 0 && y >= 0) {
+            return x + y <= r;
+        }
+        if (x <= 0 && y <= 0) {
+            return x >= -r && y >= -r;
+        }
+        if (x >= 0 && y <= 0) {
+            return x * x + y * y <= (r / 2) * (r / 2);
+        }
+        return false;
+    }
+
 }
 
 class Canvas {
-    points_pool
-
     constructor(canvas) {
         this.SIZE = canvas.width;
         this.CENTER = this.SIZE / 2
         this.R_PIX = this.SIZE / 7
         this.scale = this.R_PIX
         this.points_pool = this.load()
+        this.table = new ResultTable(this.points_pool)
         this.redraw(canvas, 1, this.points_pool)
 
         const form = document.querySelector('form')
@@ -64,10 +78,11 @@ class Canvas {
             const strX = document.getElementById("data-x").value
             const listY = Array.from(document.querySelectorAll("input[name='data-y']:checked")).map(chbx => chbx.value)
             const r = document.getElementById("data-r").value
-            // alert(`${strX} : ${listY} : ${r}`)
+
             this.validate(strX, listY, r)
                 .then(data => this.createPoints(...data))
                 .then(([points, r]) => this.redraw(canvas, r, points))
+                .then(points => this.table.addPoints(points))
                 .catch(error => {
                     console.log(error)
                 })
@@ -75,8 +90,17 @@ class Canvas {
         document.getElementById("data-r").addEventListener("change", (e) => {
             this.redraw(canvas, Number(e.target.value), this.points_pool)
         })
+
+        this.buttonRgbShadow(0,document.querySelector(".rgb-box"))
     }
 
+    buttonRgbShadow(angle, button){
+        angle = angle === 360 ? 0 : angle + 7;
+        setTimeout(() => {
+            button.style.boxShadow = `1px 1px hsl(${angle} 100% 50%)`
+            this.buttonRgbShadow(angle, button)
+        }, 150)
+    }
 
     drawCanvas(canvas, r) {
         const ctx = canvas.getContext("2d")
@@ -184,7 +208,7 @@ class Canvas {
                 ctx.beginPath();
                 ctx.arc(this.toXPix(point.x), this.toYPix(point.y), 3, 0, Math.PI * 2);
                 ctx.save()
-                if (this.isHit(point.x, point.y, r)) {
+                if (point.isHit(r)) {
                     ctx.fillStyle = "red";
                 } else {
                     ctx.fillStyle = "black";
@@ -237,20 +261,10 @@ class Canvas {
         ctx.clearRect(0, 0, this.SIZE, this.SIZE);
         this.drawCanvas(canvas, r);
         this.drawPoints(canvas, points, r);
+        return points
     }
 
-    isHit(x, y, r) {
-        if (x >= 0 && y >= 0) {
-            return x + y <= r;
-        }
-        if (x <= 0 && y <= 0) {
-            return x >= -r && y >= -r;
-        }
-        if (x >= 0 && y <= 0) {
-            return x * x + y * y <= (r / 2) * (r / 2);
-        }
-        return false;
-    }
+
 
     async validate(strX, listY, r) {
         const Y_VALUES = [-4, -3, -2, -1, 0, 1, 2, 3, 4]
@@ -329,6 +343,41 @@ class Canvas {
         }
     }
 
+}
+
+class ResultTable {
+    constructor(points) {
+        this.$tbody = $("#result-table tbody")
+        points.forEach(p => this.addPoint(p))
+    }
+
+    addPoint(point) {
+        const $row = $("<tr>")
+        const $point = [
+            point.x,
+            point.y,
+            point.r,
+            null,
+            new Date(point.time).toLocaleString("ru-RU")
+        ]
+
+        for (let value of $point){
+            let $td = $("<td>")
+            if (value !== null) {
+                $td.text(value)
+            }
+            $td.appendTo($row)
+        }
+
+        $row.find("td:nth-child(4)").addClass(point.isHit() ? "hit" : "miss")
+        this.$tbody.prepend($row)
+    };
+
+    async addPoints(points) {
+        for (const point of points) {
+            this.addPoint(point)
+        }
+    }
 }
 
 new Canvas(document.getElementById("graphic"))
