@@ -4,38 +4,40 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="styles.css">
 
+    <script src="jquery-4.0.0.js"></script>
+
 </head>
 <body>
+<div class="cap">
+    <p>Шапка</p>
+</div>
 <div id="drawings">
     <canvas class="graphic" id="graphic" width="500" height="500"></canvas>
     <form id="graph-form" enctype="application/x-www-form-urlencoded">
+
         <p><label>Изменение X:
             <input type="text" id="data-x" required pattern="-?\d+([.,]\d+)?" inputmode="decimal"
                    title="Число от -5 до 5">
 
         </label></p>
         <fieldset id="data-y"><legend>Изменение Y:</legend>
-            <label class="negative"><input type="checkbox" name="data-y" value="-1">-1</label>
-            <label class="negative"><input type="checkbox" name="data-y" value="-2">-2</label>
-            <label class="negative"><input type="checkbox" name="data-y" value="-3">-3</label>
-            <label class="negative"><input type="checkbox" name="data-y" value="-4">-4</label>
-            <label class="zero"><input type="checkbox" name="data-y" value="0">0</label>
-            <label class="positive"><input type="checkbox" name="data-y" value="1">1</label>
-            <label class="positive"><input type="checkbox" name="data-y" value="2">2</label>
-            <label class="positive"><input type="checkbox" name="data-y" value="3">3</label>
-            <label class="positive"><input type="checkbox" name="data-y" value="4">4</label>
-
-            <label class="positive"><input type="checkbox" name="data-y" value="4">4</label>
-            <label class="positive"><input type="checkbox" name="data-y" value="4">4</label>
-            <label class="positive"><input type="checkbox" name="data-y" value="4">4</label>
-            <label class="positive"><input type="checkbox" name="data-y" value="4">4</label>
-            <label class="positive"><input type="checkbox" name="data-y" value="4">4</label>
-            <label class="positive"><input type="checkbox" name="data-y" value="4">4</label>
-            <label class="positive"><input type="checkbox" name="data-y" value="4">4</label>
-            <label class="positive"><input type="checkbox" name="data-y" value="4">4</label>
-            <label class="positive"><input type="checkbox" name="data-y" value="4">4</label>
-            <label class="positive"><input type="checkbox" name="data-y" value="4">4</label>
+            <div  class="negative">
+                <label><input type="checkbox" name="data-y" value="-1">-1</label>
+                <label><input type="checkbox" name="data-y" value="-2">-2</label>
+                <label><input type="checkbox" name="data-y" value="-3">-3</label>
+                <label><input type="checkbox" name="data-y" value="-4">-4</label>
+            </div>
+            <div class="zero">
+                <label><input type="checkbox" name="data-y" value="0">0</label>
+            </div>
+            <div class="positive">
+                <label><input type="checkbox" name="data-y" value="1">1</label>
+                <label><input type="checkbox" name="data-y" value="2">2</label>
+                <label><input type="checkbox" name="data-y" value="3">3</label>
+                <label><input type="checkbox" name="data-y" value="4">4</label>
+            </div>
         </fieldset>
+
         <p><label>Изменение R:
             <select id="data-r" required>
                 <option value="1">1</option>
@@ -45,13 +47,28 @@
                 <option value="3">3</option>
             </select>
         </label></p>
-        <button type="submit">Проверить</button>
+
+        <button class="rgb-box" type="submit">Проверить</button>
 
     </form>
-    <script src="script.js"></script>
+    <div id="table-wrapper">
+        <table id="result-table">
+            <thead>
+                <tr><th>X</th><th>Y</th><th>R</th><th>Попадание</th><th>Дата</th></tr>
+            </thead>
+            <tbody>
 
+            </tbody>
+        </table>
+    </div>
+
+    <script src="script.js"></script>
 </div>
 
+
+<div class="bottom">
+    <p>ДНО</p>
+</div>
 
 
 </body>
