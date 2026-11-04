@@ -38,6 +38,13 @@ class Point {
         this.time = time;
     }
 
+    equalsXY(other) {
+        if (other instanceof Point) {
+            return this.x === other.x && this.y === other.y;
+
+        } else throw new TypeError(`${other} must be a Point`);
+    }
+
 }
 
 class Canvas {
@@ -170,8 +177,9 @@ class Canvas {
 
     drawPoints(canvas, points, r) {
         if (this.validatePoints(points)) {
+            let uniquePoints = this.getUniquePoints(points)
             const ctx = canvas.getContext("2d");
-            for (let point of points) {
+            for (let point of uniquePoints) {
 
                 ctx.beginPath();
                 ctx.arc(this.toXPix(point.x), this.toYPix(point.y), 3, 0, Math.PI * 2);
@@ -185,6 +193,16 @@ class Canvas {
                 ctx.restore();
             }
         }
+    }
+
+    getUniquePoints(points) {
+        let filtered = []
+        for (let point of points) {
+            if (!filtered.some(p => p.equalsXY(point))) {
+                filtered.push(point);
+            }
+        }
+        return filtered;
     }
 
     validatePoints(points) {
