@@ -1,0 +1,58 @@
+#drawings {
+    display: grid;
+    grid-template-columns: 500px 200px;
+    grid-template-areas: "graphic form";
+    gap: 40px;
+}
+
+
+#graphic {
+    grid-area: graphic;
+    image-rendering: high-quality;
+}
+
+#graph-form{
+    grid-area: form;
+}
+
+legend {
+    background-color: #000;
+    color: #fff;
+    padding: 3px 6px;
+}
+
+label.negative {
+    grid-column: 1;
+}
+
+label.positive {
+    grid-column: 3;
+}
+
+label.zero {
+    grid-column: 2;
+    /*grid-row: ;*/
+}
+
+fieldset{
+    border: none;
+    display: grid;
+    grid-template-columns: repeat(3, 35px);
+    grid-auto-flow: column;
+    gap: 6px 10px;
+}
+
+.input-error {
+    position: absolute;
+    color: red;
+    background-color: #fff;
+    border: 1px solid red;
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-size: 13px;
+    z-index: 1000;
+    white-space: nowrap;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    pointer-events: none;
+}
+

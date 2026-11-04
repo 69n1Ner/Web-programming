@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<head>
+    <title>Lab 1</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="styles.css">
+
+</head>
+<body>
+<div id="drawings">
+    <canvas class="graphic" id="graphic" width="500" height="500"></canvas>
+    <form id="graph-form" enctype="application/x-www-form-urlencoded">
+        <p><label>Изменение X:
+            <input type="text" id="data-x" required pattern="-?\d+([.,]\d+)?" inputmode="decimal"
+                   title="Число от -5 до 5">
+
+        </label></p>
+        <fieldset id="data-y"><legend>Изменение Y:</legend>
+            <label class="negative"><input type="checkbox" name="data-y" value="-1">-1</label>
+            <label class="negative"><input type="checkbox" name="data-y" value="-2">-2</label>
+            <label class="negative"><input type="checkbox" name="data-y" value="-3">-3</label>
+            <label class="negative"><input type="checkbox" name="data-y" value="-4">-4</label>
+            <label class="zero"><input type="checkbox" name="data-y" value="0">0</label>
+            <label class="positive"><input type="checkbox" name="data-y" value="1">1</label>
+            <label class="positive"><input type="checkbox" name="data-y" value="2">2</label>
+            <label class="positive"><input type="checkbox" name="data-y" value="3">3</label>
+            <label class="positive"><input type="checkbox" name="data-y" value="4">4</label>
+
+            <label class="positive"><input type="checkbox" name="data-y" value="4">4</label>
+            <label class="positive"><input type="checkbox" name="data-y" value="4">4</label>
+            <label class="positive"><input type="checkbox" name="data-y" value="4">4</label>
+            <label class="positive"><input type="checkbox" name="data-y" value="4">4</label>
+            <label class="positive"><input type="checkbox" name="data-y" value="4">4</label>
+            <label class="positive"><input type="checkbox" name="data-y" value="4">4</label>
+            <label class="positive"><input type="checkbox" name="data-y" value="4">4</label>
+            <label class="positive"><input type="checkbox" name="data-y" value="4">4</label>
+            <label class="positive"><input type="checkbox" name="data-y" value="4">4</label>
+            <label class="positive"><input type="checkbox" name="data-y" value="4">4</label>
+        </fieldset>
+        <p><label>Изменение R:
+            <select id="data-r" required>
+                <option value="1">1</option>
+                <option value="1.5">1.5</option>
+                <option value="2">2</option>
+                <option value="2.5">2.5</option>
+                <option value="3">3</option>
+            </select>
+        </label></p>
+        <button type="submit">Проверить</button>
+
+    </form>
+    <script src="script.js"></script>
+
+</div>
+
+
+
+</body>

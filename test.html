@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- <meta http-equiv="refresh" content="0; url=http://google.com"> -->
+
+</head>
+<body>
+<div id="menu">
+  <button data-action="save">Сохранить</button>
+  <button data-action="load">Загрузить</button>
+  <button data-action="search">Поиск</button>
+</div>
+
+<script>
+  class Menu {
+    constructor(elem) {
+      elem.onclick = this.onClick.bind(this); // (*)
+    }
+
+    save() {
+      alert('сохраняю');
+    }
+
+    load() {
+      alert('загружаю');
+    }
+
+    search() {
+      alert('ищу');
+    }
+
+    onClick(event) {
+      let action = event.target.dataset.action;
+      if (action) {
+        this[action]();
+      }
+    }
+  }
+
+  new Menu(menu);
+</script>
+
+
+<button id="butt">Butt</button>
+
+<script>
+      function createMessageUnder(elem, html) {
+  // создаём элемент, который будет содержать сообщение
+  let message = document.createElement('div');
+  // для стилей лучше было бы использовать css-класс здесь
+  message.style.cssText = "position:absolute; color: red";
+
+  // устанавливаем координаты элементу, не забываем про "px"!
+  let coords = elem.getBoundingClientRect();
+
+  message.style.left = coords.left + "px";
+  message.style.top = coords.bottom + "px";
+
+  message.innerHTML = html;
+
+  return message;
+}
+
+   let elem = document.getElementById("butt");
+   elem.onclick = function () {
+   let message = createMessageUnder(elem,"Hello");
+   document.body.append(message)
+   }
+   </script>
+
+<style>
+  #my-div { width: 100px; }
+</style>
+<div id="my-div"></div>
+
+<script>
+  let div = document.getElementById('my-div');
+  
+  // Вернет пустую строку, хотя визуально ширина 100px!
+  console.log(div.style.width); 
+  
+  // Как получить реальную ширину, учитывая все CSS-файлы?
+  // Используйте getComputedStyle:
+  let realWidth = window.getComputedStyle(div).width;
+  console.log(realWidth); // "100px"
+</script>
+
+<!-- <script>
+   function sayHi() {
+  alert("Hello");
+}
+
+// глобальные функции доступны как методы глобального объекта:
+window.sayHi();
+</script> -->
+
+   
+<form id="form" method="post" enctype="application/x-www-form-urlencoded" action="https://pizza.example.com/order.cgi">
+   <p><label>Customer name: <input name="custname" required autocomplete="shipping name"></label></p>
+   <p><label>Telephone: <input type=tel name="custtel" autocomplete="shipping tel"></label></p>
+   <p><label>Buzzer code: <input name="custbuzz" inputmode="numeric"></label></p>
+   <p><label>Email address: <input type=email name="custemail" autocomplete="shipping email"></label></p>
+   <fieldset>
+      <legend>Pizza Size</legend>
+      <p><label> <input type="radio" name="size" required value="small">Small</label></p>
+      <p><label> <input type="radio" name="size" required value="medium">Medium</label></p>
+      <p><label> <input type="radio" name="size" required value="large">Large</label></p>
+   </fieldset>
+   <fieldset>
+      <legend>Pizza Toppings</legend>
+      <p><label> <input type="checkbox" name="topping" value="bacon">Bacon</label></p>
+      <p><label> <input type="checkbox" name="topping" value="cheese">Extra Cheese</label></p>
+      <p><label> <input type="checkbox" name="topping" value="onion">Onion</label></p>
+      <p><label> <input type="checkbox" name="topping" value="mushroom">Mushroom</label></p>
+   </fieldset>
+   <p><label>Preferred delivery time: <input type="time" min="11:00" max="21:00" step="900" name="delivery" required></label></p>
+   <p><label>Delivery instructions: <textarea name="comments" maxlength=1000></textarea></label></p>
+   <p><button>Submit order</button></p>
+</form>
+
+<input type="button" value="button">
+</body>
+</html>
