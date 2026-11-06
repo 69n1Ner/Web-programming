@@ -2,15 +2,21 @@ function showErrMessage(elem, html) {
     let message = document.createElement('div');
     message.classList.add("input-error")
 
-    let coords = elem.getBoundingClientRect();
-
-    // todo поправить выставление позиции
-    message.style.left = (coords.left + window.scrollX + 120) + "px";
-    message.style.top = (coords.top + window.scrollY + 7) + "px";
 
     message.innerText = html;
     elem.append(message)
+
+
+    const resizeErrMessage = () => {
+        const coords = elem.getBoundingClientRect();
+        message.style.left = (window.scrollX + coords.left + (elem.offsetWidth - message.offsetWidth)/2) + "px";
+        message.style.top = (window.scrollY + coords.bottom + 10) + "px";
+    }
+    resizeErrMessage();
+    window.addEventListener('resize', resizeErrMessage);
+
     setTimeout(() => {
+        window.removeEventListener('resize', resizeErrMessage);
         message.remove();
     }, 3000);
 }
@@ -27,6 +33,13 @@ class EmptyError extends Error {
 
         super(`${itemName} is empty`);
         this.name = "EmptyError";
+    }
+}
+
+class DefinitionError extends Error {
+    constructor(target) {
+        super(`${target} is outside definition`);
+        this.name = "DefinitionError";
     }
 }
 
@@ -65,29 +78,31 @@ class Point {
 class Canvas {
     constructor(canvas) {
         this.SIZE = canvas.width;
-        this.CENTER = this.SIZE / 2
-        this.scale = this.SIZE / 7
-        this.points_pool = this.load()
+        this.CENTER = this.SIZE / 2;
+        this.scale = this.SIZE / 7;
+        this.R =this.loadR()
+        this.points_pool = this.loadPoints()
         this.table = new ResultTable(this.points_pool)
-        this.redraw(canvas, 1, this.points_pool)
+        this.redraw(canvas, this.R, this.points_pool)
 
         const form = document.querySelector('form')
         form.addEventListener('submit', (event) => {
             event.preventDefault()
             const strX = document.getElementById("data-x").value
             const listY = Array.from(document.querySelectorAll("input[name='data-y']:checked")).map(chbx => chbx.value)
-            const r = document.getElementById("data-r").value
+            const strR = document.getElementById("data-r").value
 
-            this.validate(strX, listY, r)
+            this.validate(strR, strX, listY)
                 .then(data => this.createPoints(...data))
                 .then(([points, r]) => this.redraw(canvas, r, points))
                 .then(points => this.table.addPoints(points))
                 .catch(error => {
-                    console.log(error)
+                    console.error(error)
                 })
         })
         document.getElementById("data-r").addEventListener("change", (e) => {
-            this.redraw(canvas, Number(e.target.value), this.points_pool)
+            this.saveR(+e.target.value);
+            this.redraw(canvas, this.R, this.points_pool)
         })
 
         this.buttonRgbShadow(0,document.querySelector(".rgb-box"))
@@ -105,8 +120,10 @@ class Canvas {
         const ctx = canvas.getContext("2d")
         const SIZE = this.SIZE
         const CENTER = this.CENTER
+        ctx.font = "14px sans-serif";
+        ctx.fillStyle = "black"
 
-        ctx.save()
+        ctx.save();
         // figures
         ctx.fillStyle = "#3399ff";
 
@@ -152,9 +169,6 @@ class Canvas {
         ctx.stroke();
 
         //bc letters
-        ctx.textAlign = "center";
-        ctx.textBaseline = "bottom";
-        ctx.font = "14px sans-serif";
         ctx.fillText("x", SIZE - 14, CENTER - 10);
         ctx.fillText("y", CENTER + 10, 14);
 
@@ -165,7 +179,10 @@ class Canvas {
             [-r, "-R"]
         ];
 
+        ctx.save()
         //bc ticks x
+        ctx.textAlign = "center";
+        ctx.textBaseline = "bottom";
         for (const [value, label] of marks) {
             const x = this.toXPix(value);
             ctx.beginPath();
@@ -174,6 +191,7 @@ class Canvas {
             ctx.stroke();
             ctx.fillText(label, x, CENTER - 8);
         }
+
         //bc ticks y
         ctx.textAlign = "left";
         ctx.textBaseline = "middle";
@@ -186,7 +204,7 @@ class Canvas {
             ctx.fillText(label, CENTER + 8, y);
         }
 
-
+        ctx.restore();
     }
 
 
@@ -249,7 +267,7 @@ class Canvas {
             this.points_pool.push(point);
         }
 
-        this.save()
+        this.savePoints()
         return [this.points_pool, r]
     }
 
@@ -263,13 +281,24 @@ class Canvas {
 
 
 
-    async validate(strX, listY, r) {
+    async validate(strR, strX="0", listY=[0]) {
         const Y_VALUES = [-4, -3, -2, -1, 0, 1, 2, 3, 4]
-        const R_VALUES = [1, 1.5, 2, 2.5, 3]
-        const fieldSet = document.getElementById("data-y")
         let x
         let errStr = ''
+        let fieldSet = document.getElementById("data-y")
         if (listY.length !== 0) {
+
+            listY = listY.map(y => +y)
+            for (let y of listY) {
+                if (!Y_VALUES.includes(y)) {
+                    errStr += `${y} is outside the definition`
+                    showErrMessage(fieldSet, errStr)
+                    throw new TypeError(errStr);
+                }
+            }
+
+
+            fieldSet = document.querySelector("form label")
             if (typeof strX === "string") {
                 if (Number.isFinite(Number(strX)) && strX !== "") {
                     x = +strX
@@ -286,27 +315,14 @@ class Canvas {
                 }
 
             } else {
-                showErrMessage(fieldSet, errStr)
-                throw new TypeError(`x=${strX} must be a string`);
-            }
-
-            for (let y of listY) {
-                if (Y_VALUES.includes(y)) {
-                    errStr += `${y} is outside the definition`
-                    showErrMessage(fieldSet, errStr)
-                    throw new TypeError(errStr);
-                }
-            }
-            listY = listY.map(y => +y)
-
-            if (R_VALUES.includes(r)) {
-                errStr += `${r} is outside the definition`
+                errStr = `x=${strX} must be a string`
                 showErrMessage(fieldSet, errStr)
                 throw new TypeError(errStr);
             }
-            r = +r
 
-            return [x, listY, r]
+            strR = this.parseR(strR)
+
+            return [x, listY, strR]
 
         } else {
             showErrMessage(fieldSet, "At least one option must be chosen")
@@ -314,7 +330,31 @@ class Canvas {
         }
     }
 
-    save() {
+    parseR(strR){
+        if (Number.isFinite(Number(strR)) && strR !== "") {
+            strR = +strR
+            const R_VALUES = [1, 1.5, 2, 2.5, 3]
+            let errStr = ''
+            if (!R_VALUES.includes(strR)) {
+                errStr += `${strR} is outside the definition`
+                showErrMessage(document.getElementById("data-r"), errStr)
+                throw new DefinitionError(strR);
+            }
+            return strR;
+        } else throw new TypeError(`${strR} is not a number`);
+
+    }
+
+    saveR(r){
+        try{
+            this.R = this.parseR(r)
+            localStorage.setItem("r", JSON.stringify(r));
+        }catch (e){
+            if (!e instanceof TypeError) console.error("Unable to save",e);
+        }
+    }
+
+    savePoints() {
         try {
             localStorage.setItem("points", JSON.stringify(this.points_pool))
         } catch (e) {
@@ -322,7 +362,24 @@ class Canvas {
         }
     }
 
-    load() {
+    loadR(){
+        const raw = localStorage.getItem("r");
+        try{
+            if (raw === null){
+                return 1
+            }
+            const r = this.parseR(raw);
+            document.getElementById("data-r").value = r
+
+            return r
+
+        } catch (error) {
+            console.error(error);
+            return 1;
+        }
+    }
+
+    loadPoints() {
         try {
             const raw = localStorage.getItem("points")
             if (raw === null) {
