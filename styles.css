@@ -93,9 +93,21 @@ body {
     place-items: center;
 }
 
-#graph-form p {
+#graph-form > p {
     text-align: center;
 }
+
+#graph-form input:user-invalid {
+    color: red;
+}
+
+#graph-form input:focus,
+#graph-form select:focus,
+#graph-form button:focus {
+    outline: 2px solid #ef8739;
+    outline-offset: 2px;
+}
+
 legend {
     background-color: #a1c8fb;
     padding: 3px 6px;
@@ -125,14 +137,10 @@ button {
 .input-error {
     position: absolute;
     color: red;
-    background-color: #fff;
+    background-color: white;
     border: 1px solid red;
     border-radius: 4px;
-    padding: 6px 10px;
     font-size: 13px;
-    z-index: 1000;
-    white-space: nowrap;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    pointer-events: none;
+    padding: 6px 10px;
 }
 
