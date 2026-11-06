@@ -1,14 +1,37 @@
 body {
+    font-family: "Cambria Math", serif;
     display: grid;
-    grid-template-rows: auto 1fr auto;
+    grid-template-rows: auto 1fr ;
+    min-height: calc(100vh - 16px);
+    gap: 4px 0;
 }
 
-.cap {
+.cap, .bottom {
+    font-family: sans-serif;
+    color: #ef8739;
+    font-size: 3em;
+    padding: 8px 0;
+}
 
+.cap p{
+    text-align: right;
 }
 
 .bottom {
+    align-self: end;
+    font-size: 1em;
+    text-align: center;
+}
 
+.bottom a:visited{
+    color: #5c835c;
+}
+.bottom a:hover{
+    color: #69dc00;
+}
+
+.bottom p, .cap p {
+    margin: 0 4px;
 }
 
 .hit::after{
@@ -44,7 +67,7 @@ body {
 #table-wrapper{
     grid-area: table;
     overflow: auto;
-    place-self: start;
+    justify-self: start;
     height: 0;
     min-height: 100%;
 }
@@ -70,6 +93,9 @@ body {
     place-items: center;
 }
 
+#graph-form p {
+    text-align: center;
+}
 legend {
     background-color: #a1c8fb;
     padding: 3px 6px;
