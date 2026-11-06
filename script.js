@@ -8,7 +8,7 @@ function showErrMessage(elem, html) {
     message.style.left = (coords.left + window.scrollX + 120) + "px";
     message.style.top = (coords.top + window.scrollY + 7) + "px";
 
-    message.innerHTML = html;
+    message.innerText = html;
     elem.append(message)
     setTimeout(() => {
         message.remove();
@@ -347,13 +347,13 @@ class Canvas {
 
 class ResultTable {
     constructor(points) {
-        this.$tbody = $("#result-table tbody")
+        this.tbody = document.querySelector("#result-table tbody")
         points.forEach(p => this.addPoint(p))
     }
 
     addPoint(point) {
-        const $row = $("<tr>")
-        const $point = [
+        const row = document.createElement("tr");
+        const pointData = [
             point.x,
             point.y,
             point.r,
@@ -361,16 +361,15 @@ class ResultTable {
             new Date(point.time).toLocaleString("ru-RU")
         ]
 
-        for (let value of $point){
-            let $td = $("<td>")
+        for (let value of pointData){
+            let td = document.createElement("td");
             if (value !== null) {
-                $td.text(value)
+                td.innerText = value
             }
-            $td.appendTo($row)
+            row.append(td)
         }
-
-        $row.find("td:nth-child(4)").addClass(point.isHit() ? "hit" : "miss")
-        this.$tbody.prepend($row)
+        row.querySelector("td:nth-child(4)").classList.add(point.isHit() ? "hit" : "miss")
+        this.tbody.prepend(row)
     };
 
     async addPoints(points) {
