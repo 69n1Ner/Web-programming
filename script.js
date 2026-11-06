@@ -66,8 +66,7 @@ class Canvas {
     constructor(canvas) {
         this.SIZE = canvas.width;
         this.CENTER = this.SIZE / 2
-        this.R_PIX = this.SIZE / 7
-        this.scale = this.R_PIX
+        this.scale = this.SIZE / 7
         this.points_pool = this.load()
         this.table = new ResultTable(this.points_pool)
         this.redraw(canvas, 1, this.points_pool)
@@ -153,6 +152,8 @@ class Canvas {
         ctx.stroke();
 
         //bc letters
+        ctx.textAlign = "center";
+        ctx.textBaseline = "bottom";
         ctx.font = "14px sans-serif";
         ctx.fillText("x", SIZE - 14, CENTER - 10);
         ctx.fillText("y", CENTER + 10, 14);
@@ -165,8 +166,6 @@ class Canvas {
         ];
 
         //bc ticks x
-        ctx.textAlign = "center";
-        ctx.textBaseline = "bottom";
         for (const [value, label] of marks) {
             const x = this.toXPix(value);
             ctx.beginPath();
@@ -207,14 +206,12 @@ class Canvas {
 
                 ctx.beginPath();
                 ctx.arc(this.toXPix(point.x), this.toYPix(point.y), 3, 0, Math.PI * 2);
-                ctx.save()
                 if (point.isHit(r)) {
                     ctx.fillStyle = "red";
                 } else {
                     ctx.fillStyle = "black";
                 }
                 ctx.fill();
-                ctx.restore();
             }
         }
     }
