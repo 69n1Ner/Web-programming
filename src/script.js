@@ -94,8 +94,10 @@ class Canvas {
 
             this.validate(strR, strX, listY)
                 .then(data => this.createPoints(...data))
-                .then(([points, r]) => this.redraw(canvas, r, points))
-                .then(points => this.table.addPoints(points))
+                .then(([points, r]) => {
+                    this.table.addPoints(points)
+                    this.redraw(canvas, r, this.points_pool);
+                })
                 .catch(error => {
                     console.error(error);
                 });
@@ -262,13 +264,15 @@ class Canvas {
 
     async createPoints(x, listY, r) {
         let point;
+        let points = [];
         for (let y of listY) {
             point = new Point(x, y, r);
-            this.points_pool.push(point);
+            points.push(point);
         }
 
+        this.points_pool.push(...points);
         this.savePoints();
-        return [this.points_pool, r];
+        return [points, r];
     }
 
     redraw(canvas, r, points) {
@@ -355,7 +359,7 @@ class Canvas {
 
     savePoints() {
         try {
-            localStorage.setItem("points", JSON.stringify(this.points_pool));
+            localStorage.setItem("points-1", JSON.stringify(this.points_pool));
         } catch (e) {
             console.error("Unable to save", e);
         }
@@ -380,7 +384,7 @@ class Canvas {
 
     loadPoints() {
         try {
-            const raw = localStorage.getItem("points");
+            const raw = localStorage.getItem("points-1");
             if (raw === null) {
                 return [];
             }
@@ -426,7 +430,7 @@ class ResultTable {
         this.tbody.prepend(row);
     };
 
-    async addPoints(points) {
+    addPoints(points) {
         for (const point of points) {
             this.addPoint(point);
         }
