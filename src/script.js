@@ -95,7 +95,7 @@ class Canvas {
             this.validate(strR, strX, listY)
                 .then(data => this.createPoints(...data))
                 .then(([points, r]) => {
-                    this.table.addPoints(points)
+                    this.table.addPoints(points);
                     this.redraw(canvas, r, this.points_pool);
                 })
                 .catch(error => {
